@@ -1,6 +1,7 @@
 import './App.css'
+import React from "react";
 
-const list = [
+const stories = [
     {
         title: 'React',
         url: 'https://reactjs.org/',
@@ -20,38 +21,50 @@ const list = [
 ];
 
 function App() {
-
+    const [searchTerm, setSearchTerm] = React.useState('');
+    const handleSearch = (event) => {
+        setSearchTerm(event.target.value);
+    };
+    const searchedStories = stories.filter((story) =>
+        story.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <div>
           <h1>Hey</h1>
 
-          <label htmlFor="search">Search: </label>
-          <input id="search" type="text"/>
+            <Search onSearch={handleSearch} />
 
           <hr/>
 
-            <List />
+            <List list={searchedStories} />
         </div>
   );
 }
 
-function List() {
-    return (
-        <ul>
-            {list.map(function (item) {
-                return (
-                    <li key={item.objectID}>
-                        <span>
-                        <a href={item.url}>{item.title}</a>
-                        </span>
-                        <span>{item.author}</span>
-                        <span>{item.num_comments}</span>
-                        <span>{item.points}</span>
-                    </li>
-                );
-            })}
-        </ul>
-    );
-}
+const List = (props) => (
+    <ul>
+        {props.list.map((item) => (
+            <Item key={item.objectID} item={item} />
+        ))}
+    </ul>
+);
+
+const Item = (props) => (
+    <li>
+    <span>
+    <a href={props.item.url}>{props.item.title}</a>
+    </span>
+        <span>{props.item.author}</span>
+        <span>{props.item.num_comments}</span>
+        <span>{props.item.points}</span>
+    </li>
+);
+
+const Search = (props) => (
+    <div>
+        <label htmlFor="search">Search: </label>
+        <input id="search" type="text" onChange={props.onSearch} />
+    </div>
+);
 
 export default App
